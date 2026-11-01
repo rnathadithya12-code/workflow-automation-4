@@ -121,7 +121,5 @@ Follow `docs/evidence/README.md`. Replace the templates only with screenshots fr
 - [Camunda Spring Boot starter](https://docs.camunda.io/docs/apis-tools/camunda-spring-boot-starter/getting-started/)
 - [Camunda HTTP JSON connector](https://docs.camunda.io/docs/components/connectors/protocol/rest/)
 
-## Submission hygiene
 
-Before publishing or submitting, run `scripts/validate-models.ps1`, review the generated output, and confirm that `docs/evidence/captured/` contains only genuine screenshots from the student's own Camunda environment. Never commit client secrets, bearer tokens, real card numbers, or real patient identifiers.
 
