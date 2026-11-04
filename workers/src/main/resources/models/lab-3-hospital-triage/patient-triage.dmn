@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<dmn:Definitions xmlns:dmn="https://www.omg.org/spec/DMN/20191111/MODEL" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_PatientTriageDMN" name="Patient triage decisions" namespace="http://workflow-automation-4.example/lab3" exporter="Camunda Modeler" exporterVersion="5.39.0">
+<dmn:definitions xmlns:dmn="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_PatientTriageDMN" name="Patient triage decisions" namespace="http://workflow-automation-4.example/lab3" exporter="Camunda Modeler" exporterVersion="5.39.0">
   <dmn:decision id="patient_triage_decision" name="Educational patient triage decision">
     <dmn:decisionTable id="DecisionTable_PatientTriage" hitPolicy="FIRST">
       <dmn:input id="Input_ChestPain" label="Chest pain flag"><dmn:inputExpression id="InputExpression_ChestPain" typeRef="boolean"><dmn:text>chestPain</dmn:text></dmn:inputExpression></dmn:input>
@@ -15,5 +15,5 @@
       <dmn:rule id="Rule_Triage_Routine"><dmn:inputEntry id="Entry_Triage_Routine_1"><dmn:text>-</dmn:text></dmn:inputEntry><dmn:inputEntry id="Entry_Triage_Routine_2"><dmn:text>-</dmn:text></dmn:inputEntry><dmn:inputEntry id="Entry_Triage_Routine_3"><dmn:text>-</dmn:text></dmn:inputEntry><dmn:inputEntry id="Entry_Triage_Routine_4"><dmn:text>-</dmn:text></dmn:inputEntry><dmn:outputEntry id="OutputEntry_Triage_Routine_1"><dmn:text>"Routine"</dmn:text></dmn:outputEntry><dmn:outputEntry id="OutputEntry_Triage_Routine_2"><dmn:text>"ROUTINE_ROUTE"</dmn:text></dmn:outputEntry></dmn:rule>
     </dmn:decisionTable>
   </dmn:decision>
-</dmn:Definitions>
+</dmn:definitions>
 
