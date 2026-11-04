@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<dmn:definitions xmlns:dmn="https://www.omg.org/spec/DMN/20191111/MODEL" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_OrderPriorityDMN" name="Order priority decisions" namespace="http://workflow-automation-4.example/lab2" exporter="Camunda Modeler" exporterVersion="5.39.0">
+<dmn:Definitions xmlns:dmn="https://www.omg.org/spec/DMN/20191111/MODEL" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_OrderPriorityDMN" name="Order priority decisions" namespace="http://workflow-automation-4.example/lab2" exporter="Camunda Modeler" exporterVersion="5.39.0">
   <dmn:decision id="order_priority_decision" name="Order priority decision">
     <dmn:decisionTable id="DecisionTable_OrderPriority" hitPolicy="FIRST">
       <dmn:input id="Input_OrderValue" label="Order value"><dmn:inputExpression id="InputExpression_OrderValue" typeRef="number"><dmn:text>orderTotal</dmn:text></dmn:inputExpression></dmn:input>
@@ -13,4 +13,5 @@
       <dmn:rule id="Rule_Order_Standard"><dmn:inputEntry id="Entry_Order_Standard_1"><dmn:text>-</dmn:text></dmn:inputEntry><dmn:inputEntry id="Entry_Order_Standard_2"><dmn:text>-</dmn:text></dmn:inputEntry><dmn:inputEntry id="Entry_Order_Standard_3"><dmn:text>-</dmn:text></dmn:inputEntry><dmn:outputEntry id="OutputEntry_Order_Standard_1"><dmn:text>"Standard"</dmn:text></dmn:outputEntry><dmn:outputEntry id="OutputEntry_Order_Standard_2"><dmn:text>"STANDARD_ROUTE"</dmn:text></dmn:outputEntry></dmn:rule>
     </dmn:decisionTable>
   </dmn:decision>
-</dmn:definitions>
+</dmn:Definitions>
+
