@@ -11,7 +11,7 @@
       <bpmn:incoming>Flow_Loan_Start_Validate</bpmn:incoming>
       <bpmn:outgoing>Flow_Loan_Validate_Credit</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Task_Loan_Credit" name="Assess credit via REST connector" zeebe:modelerTemplate="io.camunda.connectors.HttpJson.v2" zeebe:modelerTemplateVersion="18">
+    <bpmn:serviceTask id="Task_Loan_Credit" name="Assess credit via REST connector">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="io.camunda:http-json:1" retries="3" />
         <zeebe:ioMapping>
@@ -97,3 +97,4 @@
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
+
