@@ -1,0 +1,6 @@
+*.bpmn text eol=lf
+*.dmn text eol=lf
+*.svg text eol=lf
+*.md text eol=lf
+*.java text eol=lf
+*.yaml text eol=lf

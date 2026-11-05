@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+  <title id="title">Lab 1 loan approval workflow design preview</title>
+  <desc id="desc">A clean left-to-right loan approval process with validation, credit REST assessment, DMN decision, and approved, manual review, and rejected routes.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L10,3 L0,6 Z" fill="#64748b"/></marker>
+    <style>
+      .title{font:700 26px 'Segoe UI',Arial,sans-serif;fill:#0f172a}.sub{font:400 14px 'Segoe UI',Arial,sans-serif;fill:#64748b}.label{font:600 14px 'Segoe UI',Arial,sans-serif;fill:#0f172a}.small{font:400 12px 'Segoe UI',Arial,sans-serif;fill:#475569}.edge{stroke:#64748b;stroke-width:2;fill:none;marker-end:url(#arrow)}.worker{fill:#e0f2fe;stroke:#0284c7;stroke-width:2}.connector{fill:#ccfbf1;stroke:#0f766e;stroke-width:2}.dmn{fill:#ede9fe;stroke:#7c3aed;stroke-width:2}.human{fill:#fef3c7;stroke:#d97706;stroke-width:2}.end{fill:#f8fafc;stroke:#334155;stroke-width:2}.gateway{fill:#fff7ed;stroke:#ea580c;stroke-width:2}.legend{font:400 12px 'Segoe UI',Arial,sans-serif;fill:#334155}
+    </style>
+  </defs>
+  <rect width="1200" height="520" fill="#f8fafc"/>
+  <rect x="24" y="20" width="1152" height="74" rx="16" fill="#0f172a"/>
+  <text x="52" y="53" class="title" style="fill:#ffffff">Loan approval automation</text>
+  <text x="52" y="77" class="sub" fill="#cbd5e1">Camunda 8 design preview · worker validation · REST credit assessment · DMN routing</text>
+  <path class="edge" d="M76 250 H118"/><path class="edge" d="M268 250 H310"/><path class="edge" d="M480 250 H525"/><path class="edge" d="M675 250 H712"/>
+  <path class="edge" d="M737 225 V158 H910"/><path class="edge" d="M762 250 H850"/><path class="edge" d="M737 275 V354 H910"/><path class="edge" d="M1020 250 H1070"/>
+  <circle cx="58" cy="250" r="18" fill="#ffffff" stroke="#0f766e" stroke-width="3"/>
+  <rect x="118" y="210" width="150" height="80" rx="12" class="worker"/><text x="193" y="244" text-anchor="middle" class="label">Validate</text><text x="193" y="264" text-anchor="middle" class="label">applicant</text><text x="193" y="282" text-anchor="middle" class="small">external worker</text>
+  <rect x="310" y="210" width="170" height="80" rx="12" class="connector"/><text x="395" y="242" text-anchor="middle" class="label">Assess credit</text><text x="395" y="262" text-anchor="middle" class="label">via REST</text><text x="395" y="281" text-anchor="middle" class="small">HTTP JSON connector</text>
+  <rect x="525" y="210" width="150" height="80" rx="12" class="dmn"/><text x="600" y="244" text-anchor="middle" class="label">Evaluate loan</text><text x="600" y="264" text-anchor="middle" class="label">decision</text><text x="600" y="282" text-anchor="middle" class="small">DMN table</text>
+  <polygon points="737,225 762,250 737,275 712,250" class="gateway"/><text x="737" y="312" text-anchor="middle" class="small">route</text>
+  <rect x="910" y="118" width="110" height="60" rx="12" class="end"/><text x="965" y="144" text-anchor="middle" class="label">Approved</text><text x="965" y="162" text-anchor="middle" class="small">end</text>
+  <rect x="850" y="210" width="170" height="80" rx="12" class="human"/><text x="935" y="244" text-anchor="middle" class="label">Review application</text><text x="935" y="264" text-anchor="middle" class="label">manually</text><text x="935" y="282" text-anchor="middle" class="small">Tasklist user task</text>
+  <rect x="910" y="324" width="110" height="60" rx="12" class="end"/><text x="965" y="350" text-anchor="middle" class="label">Rejected</text><text x="965" y="368" text-anchor="middle" class="small">default route</text>
+  <circle cx="1088" cy="250" r="18" fill="#ffffff" stroke="#334155" stroke-width="3"/><text x="58" y="292" text-anchor="middle" class="small">start</text><text x="1088" y="292" text-anchor="middle" class="small">end</text>
+  <rect x="44" y="442" width="1112" height="46" rx="12" fill="#ffffff" stroke="#e2e8f0"/>
+  <rect x="66" y="457" width="16" height="16" rx="4" class="worker"/><text x="90" y="470" class="legend">Worker</text><rect x="164" y="457" width="16" height="16" rx="4" class="connector"/><text x="188" y="470" class="legend">REST connector</text><rect x="310" y="457" width="16" height="16" rx="4" class="dmn"/><text x="334" y="470" class="legend">DMN</text><rect x="408" y="457" width="16" height="16" rx="4" class="human"/><text x="432" y="470" class="legend">Human review</text><polygon points="560,457 568,465 560,473 552,465" class="gateway"/><text x="580" y="470" class="legend">Exclusive route</text><text x="840" y="470" class="legend">All data is synthetic and educational</text>
+</svg>

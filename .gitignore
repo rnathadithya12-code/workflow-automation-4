@@ -1,0 +1,26 @@
+# Java / Maven
+workers/target/
+workers/.mvn/wrapper/maven-wrapper.jar
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+workers/src/main/resources/application-local.yaml
+
+# Captured evidence is intentionally kept out of the starter repository.
+docs/evidence/captured/*
+!docs/evidence/captured/.gitkeep
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Task-local scratch space
+work/
+outputs/

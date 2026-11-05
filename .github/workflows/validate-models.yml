@@ -1,0 +1,14 @@
+name: Validate Camunda models
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  models:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate BPMN and DMN XML
+        shell: pwsh
+        run: ./scripts/validate-models.ps1

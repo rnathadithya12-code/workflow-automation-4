@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_LoanApproval" targetNamespace="http://workflow-automation-4.example/lab1" exporter="Camunda Modeler" exporterVersion="5.49.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.8.0">
+  <bpmn:process id="loan-approval" name="Loan approval automation" isExecutable="true">
+    <bpmn:startEvent id="Start_LoanApplication" name="Application received">
+      <bpmn:outgoing>Flow_Loan_Start_Validate</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Task_Loan_Validate" name="Validate applicant">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="lab1.validate-applicant" retries="3" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Loan_Start_Validate</bpmn:incoming>
+      <bpmn:outgoing>Flow_Loan_Validate_Credit</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_Loan_Credit" name="Assess credit via REST connector">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.camunda:http-json:1" retries="3" />
+        <zeebe:ioMapping>
+          <zeebe:input source="POST" target="method" />
+          <zeebe:input source="=creditApiUrl" target="url" />
+          <zeebe:input source="={applicantReference: applicantReference, requestedAmount: requestedAmount, monthlyIncome: monthlyIncome, creditScore: creditScore, debtToIncome: debtToIncome, simulateApiFailure: simulateApiFailure}" target="body" />
+          <zeebe:input source="JSON" target="documentReturnFormat.choice" />
+          <zeebe:input source="20" target="connectionTimeoutInSeconds" />
+          <zeebe:input source="20" target="readTimeoutInSeconds" />
+          <zeebe:input source="false" target="ignoreNullValues" />
+          <zeebe:input source="false" target="followRedirects" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="resultVariable" value="creditResponse" />
+          <zeebe:header key="resultExpression" value="={creditScore: response.body.creditScore, debtToIncome: response.body.debtToIncome, creditAssessmentStatus: response.body.status, providerReference: response.body.providerReference}" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Loan_Validate_Credit</bpmn:incoming>
+      <bpmn:outgoing>Flow_Loan_Credit_Decision</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:businessRuleTask id="Task_Loan_Decision" name="Evaluate loan decision">
+      <bpmn:extensionElements>
+        <zeebe:calledDecision decisionId="loan_approval_decision" resultVariable="loanDecision" bindingType="latest" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Loan_Credit_Decision</bpmn:incoming>
+      <bpmn:outgoing>Flow_Loan_Decision_Gateway</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:exclusiveGateway id="Gateway_Loan_Route" name="Route application" default="Flow_Loan_Reject">
+      <bpmn:incoming>Flow_Loan_Decision_Gateway</bpmn:incoming>
+      <bpmn:outgoing>Flow_Loan_Approve</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Loan_Manual</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Loan_Reject</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="End_Loan_Approved" name="Approved">
+      <bpmn:incoming>Flow_Loan_Approve</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="Task_Loan_ManualReview" name="Review application manually">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+        <zeebe:assignmentDefinition candidateGroups="loan-reviewers" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Loan_Manual</bpmn:incoming>
+      <bpmn:outgoing>Flow_Loan_Manual_End</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="End_Loan_Manual" name="Review completed">
+      <bpmn:incoming>Flow_Loan_Manual_End</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="End_Loan_Rejected" name="Rejected">
+      <bpmn:incoming>Flow_Loan_Reject</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_Loan_Start_Validate" sourceRef="Start_LoanApplication" targetRef="Task_Loan_Validate" />
+    <bpmn:sequenceFlow id="Flow_Loan_Validate_Credit" sourceRef="Task_Loan_Validate" targetRef="Task_Loan_Credit" />
+    <bpmn:sequenceFlow id="Flow_Loan_Credit_Decision" sourceRef="Task_Loan_Credit" targetRef="Task_Loan_Decision" />
+    <bpmn:sequenceFlow id="Flow_Loan_Decision_Gateway" sourceRef="Task_Loan_Decision" targetRef="Gateway_Loan_Route" />
+    <bpmn:sequenceFlow id="Flow_Loan_Approve" name="Approved" sourceRef="Gateway_Loan_Route" targetRef="End_Loan_Approved">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=loanDecision.decision = "Approved"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Loan_Manual" name="Manual Review" sourceRef="Gateway_Loan_Route" targetRef="Task_Loan_ManualReview">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=loanDecision.decision = "Manual Review"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Loan_Manual_End" sourceRef="Task_Loan_ManualReview" targetRef="End_Loan_Manual" />
+    <bpmn:sequenceFlow id="Flow_Loan_Reject" name="Rejected / default" sourceRef="Gateway_Loan_Route" targetRef="End_Loan_Rejected" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_LoanApproval">
+    <bpmndi:BPMNPlane id="BPMNPlane_LoanApproval" bpmnElement="loan-approval">
+      <bpmndi:BPMNShape id="Shape_Start_LoanApplication" bpmnElement="Start_LoanApplication">
+        <dc:Bounds x="160" y="195" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="151" y="231" width="54" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_Loan_Validate" bpmnElement="Task_Loan_Validate">
+        <dc:Bounds x="240" y="173" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_Loan_Credit" bpmnElement="Task_Loan_Credit">
+        <dc:Bounds x="440" y="173" width="165" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_Loan_Decision" bpmnElement="Task_Loan_Decision">
+        <dc:Bounds x="655" y="173" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Gateway_Loan_Route" bpmnElement="Gateway_Loan_Route" isMarkerVisible="true">
+        <dc:Bounds x="865" y="188" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="847" y="238" width="86" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_End_Loan_Approved" bpmnElement="End_Loan_Approved">
+        <dc:Bounds x="1060" y="80" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1054" y="116" width="48" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_Loan_ManualReview" bpmnElement="Task_Loan_ManualReview">
+        <dc:Bounds x="985" y="173" width="180" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_End_Loan_Manual" bpmnElement="End_Loan_Manual">
+        <dc:Bounds x="1210" y="195" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1183" y="231" width="90" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_End_Loan_Rejected" bpmnElement="End_Loan_Rejected">
+        <dc:Bounds x="1060" y="335" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1056" y="371" width="44" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Edge_Flow_Loan_Start_Validate" bpmnElement="Flow_Loan_Start_Validate">
+        <di:waypoint x="196" y="213" />
+        <di:waypoint x="240" y="213" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_Loan_Validate_Credit" bpmnElement="Flow_Loan_Validate_Credit">
+        <di:waypoint x="390" y="213" />
+        <di:waypoint x="440" y="213" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_Loan_Credit_Decision" bpmnElement="Flow_Loan_Credit_Decision">
+        <di:waypoint x="605" y="213" />
+        <di:waypoint x="655" y="213" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_Loan_Decision_Gateway" bpmnElement="Flow_Loan_Decision_Gateway">
+        <di:waypoint x="805" y="213" />
+        <di:waypoint x="865" y="213" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_Loan_Approve" bpmnElement="Flow_Loan_Approve">
+        <di:waypoint x="890" y="188" />
+        <di:waypoint x="890" y="98" />
+        <di:waypoint x="1060" y="98" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="881" y="133" width="48" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_Loan_Manual" bpmnElement="Flow_Loan_Manual">
+        <di:waypoint x="915" y="213" />
+        <di:waypoint x="985" y="213" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="912" y="188" width="76" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_Loan_Manual_End" bpmnElement="Flow_Loan_Manual_End">
+        <di:waypoint x="1165" y="213" />
+        <di:waypoint x="1210" y="213" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_Loan_Reject" bpmnElement="Flow_Loan_Reject">
+        <di:waypoint x="890" y="238" />
+        <di:waypoint x="890" y="353" />
+        <di:waypoint x="1060" y="353" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="862" y="286" width="86" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
